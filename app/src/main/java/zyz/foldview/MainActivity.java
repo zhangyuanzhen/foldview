@@ -16,7 +16,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private int minLines = 2;//默认显示的行数
     private TextView textview;
     private ImageView imageView;
-    private boolean isExpand;
+    private boolean isExpand;//文本是否已展开
     private int durationMillis = 350;//动画持续时间
 
     @Override
@@ -43,32 +43,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         isExpand = !isExpand;
         textview.clearAnimation();
         final int maxHeight;//目标高度
-        final int minHeight = textview.getHeight();//起始高度
+        final int startHeight = textview.getHeight();//起始高度
         int durationMillis = 350;//动画持续时间
         if (isExpand) {
             /**
-             * 折叠动画
-             * 从实际高度缩回起始高度
+             * 展开
              */
-            maxHeight = textview.getLineHeight() * textview.getLineCount() - minHeight;
+            maxHeight = textview.getLineHeight() * textview.getLineCount() - startHeight;
             RotateAnimation animation = new RotateAnimation(0, 180, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             animation.setDuration(durationMillis);
             animation.setFillAfter(true);
             imageView.startAnimation(animation);
         } else {
             /**
-             * 展开动画
-             * 从起始高度增长至实际高度
+             *折叠
              */
-            maxHeight = textview.getLineHeight() * minLines - minHeight;
+            maxHeight = textview.getLineHeight() * minLines - startHeight;
             RotateAnimation animation = new RotateAnimation(180, 0, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             animation.setDuration(durationMillis);
             animation.setFillAfter(true);
             imageView.startAnimation(animation);
         }
         Animation animation = new Animation() {
-            protected void applyTransformation(float interpolatedTime, Transformation t) { //根据ImageView旋转动画的百分比来显示textview高度，达到动画效果
-                textview.setHeight((int) (minHeight + maxHeight * interpolatedTime));
+            protected void applyTransformation(float interpolatedTime, Transformation t) {
+                textview.setHeight((int) (startHeight + maxHeight * interpolatedTime));
             }
         };
         animation.setDuration(durationMillis);
